@@ -4,8 +4,8 @@ import { TProduct, ILarekApi, TPaymentMethod } from './model';
 type TDisplayType = 'catalog' | 'modal' | 'cart';
 type ClickEvent<T> = { event: MouseEvent; item: T };
 
-export interface IViewConstructor {
-	new (conteiner: HTMLElement, settings?: ISettings, events?: IEvents): IView;
+export interface IViewConstructor<S> {
+	new (conteiner: HTMLElement, settings?: S, events?: IEvents): IView;
 }
 
 interface IView {
@@ -14,7 +14,7 @@ interface IView {
 
 export interface ICardView {
 	element: HTMLDivElement;
-	priduct: TProduct;
+	product: TProduct;
 	display: TDisplayType;
 }
 
@@ -24,44 +24,37 @@ export interface IProductsList extends IView {
 
 export interface ICatalogView extends IProductsList {
 	element: HTMLElement;
-	productsCount: number;
 	onClick: ClickEvent<string>;
-
-	loadCatalog(products: TProduct[], api: ILarekApi): never;
 	showCatalog(): never;
 }
 
 export interface IModalView extends IView {
 	element: HTMLDivElement;
-
 	show(): never;
 	hide(): never;
 }
 
 export interface ICartElement extends ICardView {
-	set count(count: number);
-	get count(): number;
-
-	amount: number;
-	plusButton: HTMLButtonElement;
-	minusButton: HTMLButtonElement;
-	remove(): never;
+	delButton: HTMLButtonElement;
 }
 
 export interface ICartView extends IProductsList {
 	element: HTMLDivElement;
+    orderButton: HTMLButtonElement; 
+    summButton: HTMLSpanElement;
 }
 
 export interface IOrderFormView extends IView {
-    payment: TPaymentMethod;
-    adress: string;
-    submit: HTMLButtonElement;
+    paymentCash: HTMLButtonElement; 
+    paymentCashless: HTMLButtonElement; 
+    adress: HTMLInputElement; 
+    submit: HTMLButtonElement; 
 }
     
 
 export interface IContactsFormView extends IView {
-    email: string;
-    phone: string
+    email: HTMLInputElement;
+    phone: HTMLInputElement;
     submit: HTMLButtonElement;
 }
 
@@ -73,11 +66,3 @@ export interface ICartCounter extends IView {
     counter: number;
 }
 
-export interface IAppView extends IView {
-	catalog: ICatalogView;
-	modal: IModalView;
-	cart: ICartView;
-    orderForm: IOrderFormView;
-    contactsForm: IContactsFormView;
-    success: IOrderSuccessView;
-}

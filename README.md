@@ -43,35 +43,62 @@ yarn build
 
 
 ## Модель
-Модель представлена классом AppState
-Свойства:
-    catlog: ICatalog; //массив товаров
-    customer: TCustomer; //покупатель
-    busket: IBusket; //корзина
-    api: ILarekApi; //экземпляр API
-    events: IEvents; //экземпляр брокера событий 
-    orderLog: string[]; //лог сделанных заказов
-    step: TCustomerStep; //на каком шаге находится пользователь в оформлении заказа
-    curentProduct: TProduct; //текущий выбранный товар
-    
-Методы:
-    //заполнение данных покуателя
-    setPayadress(method: TPaymentMethod, address: string): boolean; 
-    setPhoneemail(phone: string, email: string): boolean;
-    makeOrder(): Promise<string>; //Попытка сделать заказ    
 
 
 ## Представление
 В представлении создаются объекты для всех элементов, подлежащих изменениям или реагирующих на события:
-0. Контейнер каталога
-1. Карточка товара (3 режима отображения - в каталоге, в модальном окне, в корзине)
-2. Счетчик корзины
-3. Модальное окно
-4. Контейнер корзины
-5. Строка товара в корзине с количеством, кнопками и суммой
-6. Форма оформления заказа
-7. Форма ввода контактов
-8. Сообщение об успешном заказе
+
+ICardView //Карточка товара
+	element: HTMLDivElement; 
+	product: TProduct; //данные продукта для отображения
+	display: TDisplayType; //тип отображения - в каталоге, в модальном окне или в строке корзины
+
+
+IProductsList //Список продуктов
+	products: TProduct[]; //массив данных продуктов для отображения
+
+
+ICatalogView //Вывод каталога товаров
+	element: HTMLElement; 
+	onClick: ClickEvent<string>; //Обработчик события клика на карточку в катаологе
+	showCatalog(): never; //Вывод каталога
+
+
+IModalView //Модальное окно
+	element: HTMLDivElement;
+	show(): never; //показать
+	hide(): never; //скрыть
+
+
+ICartElement //Отображение товара в козине
+	delButton: HTMLButtonElement; //кнопка Удалить
+
+
+ICartView // Отображение корзины
+	element: HTMLDivElement;
+    orderButton: HTMLButtonElement; //кнопка оформления заказа
+    summ: HTMLSpanElement; //отображение суммы
+
+
+IOrderFormView //Форма заказа
+    paymentCash: HTMLButtonElement; //Выбор метода платежа - безналичный
+    paymentCashless: HTMLButtonElement; //Выбор метода платежа - безналичный
+    adress: HTMLInputElement; //Поле ввода адреса
+    submit: HTMLButtonElement; //Кнопка отправки данных
+
+  
+IContactsFormView //Форма ввода контактов
+    email: HTMLInputElement; //Поле ввода почты
+    phone: HTMLInputElement; //Поле ввода телефона
+    submit: HTMLButtonElement; //Кнопка отправки данных
+
+IOrderSuccessView //Сообщение об успешном заказе
+    button: HTMLButtonElement; //кнопка закрытия
+
+ICartCounter //Cчетчик товаров в корзине
+    counter: HTMLSpanElement;
+
+
 
 ## Презентер
 Презентер обрабатывает события, поступившие от модели или представления

@@ -5,7 +5,6 @@ import { IEvents } from "../components/base/events";
 export type TProductId = string;
 export type TProductCategory = string;
 export type TPaymentMethod = 'online' | 'offline';
-export type TCustomerStep = 'cart' | 'order' | 'contacts' | 'done' | 'none';
 
 
 //API
@@ -36,37 +35,14 @@ export type TCustomer = {
 //Каталог
 export interface ICatalog {
     productList: TProduct[];
-    productListCount: number;    
-    getCatalog(api: ILarekApi): Promise<string>;
+    getCatalog(api: ILarekApi): Promise<TProduct>;
 }
 
+//Корзина
 export interface ICart {
     products: Map<TProduct, number>;
-    add(products: TProduct): void;
-    remove(products: TProduct): void;
-}
-
-//Состояние приложения
-export interface IAppState{    
-    consctuctor(events: IEvents, api: ILarekApi): IAppState;
-
-    catlog: ICatalog;
-    customer: TCustomer;
-    cart: ICart;
-
-    events: IEvents;
-    api: ILarekApi;
-    
-    orderLog: string[];
-
-    setPayadress(method: TPaymentMethod, address: string): boolean;
-    setPhoneemail(phone: string, email: string): boolean;
-
-    set step(step: TCustomerStep);
-    get step(): TCustomerStep;
-    
-    set curentProduct(product: TProduct);
-    get curentProduct(): TProduct;
-
+    add(product: TProductId): void;
+    inCard(product: TProductId):boolean;
+    remove(product: TProductId): void;
     makeOrder(): Promise<string>;
 }
