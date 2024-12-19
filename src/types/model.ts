@@ -29,7 +29,6 @@ export type TCustomer = {
     email: string;
     phone: string;
     address: string;  
-    fullData: boolean;  
 }
 
 //Каталог
@@ -40,9 +39,9 @@ export interface ICatalog {
 
 //Корзина
 export interface ICart {
-    products: Map<TProduct, number>;
-    add(product: TProductId): void;
-    inCard(product: TProductId):boolean;
-    remove(product: TProductId): void;
-    makeOrder(): Promise<string>;
+    products: TProduct[];
+    add(product: TProduct[]): void;
+    inCard(product: TProduct[]):boolean;
+    remove(product: TProduct[]): void;
+    makeOrder(customer: TCusctomer, api: ILarekApi): Promise<string>;
 }

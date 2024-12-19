@@ -17,12 +17,7 @@ export interface ICardView {
 	product: TProduct;
 	display: TDisplayType;
 }
-
-export interface IProductsList extends IView {
-	products: TProduct[];
-}
-
-export interface ICatalogView extends IProductsList {
+export interface ICatalogView extends IView {
 	element: HTMLElement;
 	onClick: ClickEvent<string>;
 	showCatalog(): never;
@@ -38,10 +33,12 @@ export interface ICartElement extends ICardView {
 	delButton: HTMLButtonElement;
 }
 
-export interface ICartView extends IProductsList {
+export interface ICartView extends IView {
 	element: HTMLDivElement;
     orderButton: HTMLButtonElement; 
     summButton: HTMLSpanElement;
+    delClick: ClickEvent<string>;
+    renderCart(): never;
 }
 
 export interface IOrderFormView extends IView {

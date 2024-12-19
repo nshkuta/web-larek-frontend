@@ -43,6 +43,41 @@ yarn build
 
 
 ## Модель
+//API для работы с сервером 
+ILarekApi
+    loadCatalog(): Promise<string>; //загрузка каталога товаров
+    order(): Promise<string>; //отправка заказа на сервер
+
+//Товар. Поля повторяют данные, получаемые с сервера
+type TProduct = {
+    id: TProductId;
+    description: string;
+    image: string;
+    title: string;
+    category: TProductCategory;
+    price: number;
+} 
+
+//Данные покупателя. Поля хранят данные, вводимые в представлении
+type TCustomer
+    payment: TPaymentMethod;
+    email: string;
+    phone: string;
+    address: string;
+
+//Каталог
+ICatalog 
+    productList: TProduct[]; // товары в каталоге
+    getCatalog(api: ILarekApi): Promise<TProduct>; //загрузка товаров с сервера с использованием API
+
+//Корзина
+ICart 
+    products: TProduct[];// товары в корзине
+    add(product: TProduct[];): void; //добавление товара в корзину
+    inCard(product: TProduct[];):boolean; //проверка наличия товара в корзине
+    remove(product: TProduct[];): void; //удаление товара из корзины
+    makeOrder(customer: TCusctomer, api: ILarekApi): Promise<string>; //отправка заказа на сервер с данными покупателя с использованием API
+
 
 
 ## Представление
@@ -53,9 +88,6 @@ ICardView //Карточка товара
 	product: TProduct; //данные продукта для отображения
 	display: TDisplayType; //тип отображения - в каталоге, в модальном окне или в строке корзины
 
-
-IProductsList //Список продуктов
-	products: TProduct[]; //массив данных продуктов для отображения
 
 
 ICatalogView //Вывод каталога товаров
@@ -78,6 +110,8 @@ ICartView // Отображение корзины
 	element: HTMLDivElement;
     orderButton: HTMLButtonElement; //кнопка оформления заказа
     summ: HTMLSpanElement; //отображение суммы
+    delClick: ClickEvent<string>; //Обработчик нажатия на кнопку удаления товара
+    renderCart(): never; //вывод корзины
 
 
 IOrderFormView //Форма заказа
