@@ -33,8 +33,8 @@ export type TCustomer = {
 
 //Каталог
 export interface ICatalog {
-    productList: TProduct[];
-    getCatalog(api: ILarekApi): Promise<TProduct>;
+    set productList(Products: TProduct[]);
+    get productList(): TProduct[];
 }
 
 //Корзина
@@ -43,5 +43,4 @@ export interface ICart {
     add(product: TProduct[]): void;
     inCard(product: TProduct[]):boolean;
     remove(product: TProduct[]): void;
-    makeOrder(customer: TCusctomer, api: ILarekApi): Promise<string>;
 }

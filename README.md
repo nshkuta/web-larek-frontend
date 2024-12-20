@@ -67,8 +67,8 @@ type TCustomer
 
 //Каталог
 ICatalog 
-    productList: TProduct[]; // товары в каталоге
-    getCatalog(api: ILarekApi): Promise<TProduct>; //загрузка товаров с сервера с использованием API
+    set productList(Products: TProduct[]); //заполнение каталога продуктами
+    get productList(): TProduct[];//получение списка продуктов из каталога
 
 //Корзина
 ICart 
@@ -76,9 +76,6 @@ ICart
     add(product: TProduct[];): void; //добавление товара в корзину
     inCard(product: TProduct[];):boolean; //проверка наличия товара в корзине
     remove(product: TProduct[];): void; //удаление товара из корзины
-    makeOrder(customer: TCusctomer, api: ILarekApi): Promise<string>; //отправка заказа на сервер с данными покупателя с использованием API
-
-
 
 ## Представление
 В представлении создаются объекты для всех элементов, подлежащих изменениям или реагирующих на события:
@@ -110,7 +107,6 @@ ICartView // Отображение корзины
 	element: HTMLDivElement;
     orderButton: HTMLButtonElement; //кнопка оформления заказа
     summ: HTMLSpanElement; //отображение суммы
-    delClick: ClickEvent<string>; //Обработчик нажатия на кнопку удаления товара
     renderCart(): never; //вывод корзины
 
 

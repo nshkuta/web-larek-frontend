@@ -37,7 +37,6 @@ export interface ICartView extends IView {
 	element: HTMLDivElement;
     orderButton: HTMLButtonElement; 
     summButton: HTMLSpanElement;
-    delClick: ClickEvent<string>;
     renderCart(): never;
 }
 
