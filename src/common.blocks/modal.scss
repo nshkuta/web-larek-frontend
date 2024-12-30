@@ -47,6 +47,8 @@
 
 	&__close {
 		position: absolute;
+		right: 48px;
+		top: 48px;
 		@include mixins.icon(2rem, 'close');
 		@include mixins.link(white, $hover);
 	}
