@@ -41,135 +41,148 @@ npm run build
 yarn build
 ```
 
+# Типы
+- type TProduct - товар
+- interface ICustomer - данные покупателя
+- interface IOrder extends ICustomer - данные для отправки заказа
+- type TProductId - ID товара
+- type TProductCategory - категория товара
+- type TPaymentMethod - форма оплаты 
+- type TCardButton - тип кнопки в карточке товара (купить, в корзину, нет)
+= type TCardDisplay - тип отображения карточки товара (в каталоге, в корзине, на превью)
 
-## Модель
-//API для работы с сервером 
-ILarekApi
-    loadCatalog(): Promise<string>; //загрузка каталога товаров
-    order(): Promise<string>; //отправка заказа на сервер
+# Модель
 
-//Товар. Поля повторяют данные, получаемые с сервера
-type TProduct = {
-    id: TProductId;
-    description: string;
-    image: string;
-    title: string;
-    category: TProductCategory;
-    price: number;
-} 
+class App extends Model<TProduct[]> // Модель приложения
+    cart: TProduct[] // Товары в корзине
+    private catalogProducts: TProduct[] // Товары в каталоге
+    customer: ICustomer // Данные пользователя
+    set catalog(products: TProduct[]) // Загрузка каталога товаров
+    get catalog(): TProduct[] // Получение каталога товаров    
 
-//Данные покупателя. Поля хранят данные, вводимые в представлении
-type TCustomer
-    payment: TPaymentMethod;
-    email: string;
-    phone: string;
-    address: string;
+    addToCart(product: TProduct) //Добавление товара в корзину
+    checkInCart(productId: string) //Проверка наличия товара в корзине
+    deleteFromCart(productId:string) //Удаление товара из корзины
+    get cartSum(): number // Получение суммарной стоимости товаров в корзине
 
-//Каталог
-ICatalog 
-    set productList(Products: TProduct[]); //заполнение каталога продуктами
-    get productList(): TProduct[];//получение списка продуктов из каталога
+# Представление
 
-//Корзина
-ICart 
-    products: TProduct[];// товары в корзине
-    add(product: TProduct[];): void; //добавление товара в корзину
-    inCard(product: TProduct[];):boolean; //проверка наличия товара в корзине
-    remove(product: TProduct[];): void; //удаление товара из корзины
+// Карточка товара
+class ProductCardView extends Component<TProduct> 
+	id: string; // ID товара
 
-## Представление
-В представлении создаются объекты для всех элементов, подлежащих изменениям или реагирующих на события:
+    //Элементы карточки
+	protected _title: HTMLElement; 
+	protected _text: HTMLElement;
+	protected _price: HTMLElement;
+	protected _category?: HTMLElement;
+	protected _image?: HTMLImageElement;
+	protected _button?: HTMLButtonElement;
+	protected _delButton?: HTMLButtonElement;
 
-ICardView //Карточка товара
-	element: HTMLDivElement; 
-	product: TProduct; //данные продукта для отображения
-	display: TDisplayType; //тип отображения - в каталоге, в модальном окне или в строке корзины
+    // События для кнопок
+	protected _buttonEventBuy
+	protected _buttonEventToCart
 
-
-
-ICatalogView //Вывод каталога товаров
-	element: HTMLElement; 
-	onClick: ClickEvent<string>; //Обработчик события клика на карточку в катаологе
-	showCatalog(): never; //Вывод каталога
+	setButton(cartButton: TCardButton) //Изменение типа кнопки
 
 
-IModalView //Модальное окно
-	element: HTMLDivElement;
-	show(): never; //показать
-	hide(): never; //скрыть
+// Каталог
+class CatalogView extends Component<TProduct> 
+	set products //Загрузка товаров в каталог
+
+// Корзина
+class CartView extends Component<TProduct[]> 
+    //Элементы корзины
+	protected _list: HTMLUListElement;
+	protected _sum: HTMLElement;
+	protected _orderButton: HTMLButtonElement;
+
+	set products(products: TProduct[]) //Загрузка товаров для отображения
+	set sum(sum: number) // Установка суммарной стоимости
 
 
-ICartElement //Отображение товара в козине
-	delButton: HTMLButtonElement; //кнопка Удалить
+//Форма заказа
+class OrderFormView extends Form<ICustomer> {
+	private payment: TPaymentMethod; // Способ оплаты	
+
+    // Установка и получение выбанного способа оплаты
+	set paymentMethod(paymentMethod: TPaymentMethod)
+	get paymentMethod ():TPaymentMethod 
+
+    // Установка и получение введенного адреса
+	set adress(adress: string) 
+	get adress(): string 
 
 
-ICartView // Отображение корзины
-	element: HTMLDivElement;
-    orderButton: HTMLButtonElement; //кнопка оформления заказа
-    summ: HTMLSpanElement; //отображение суммы
-    renderCart(): never; //вывод корзины
+//Форма ввода контактов
+ class ContactsFormView extends Form<ICustomer> 
+    //Установка и получение введенных полей
+	set email(email: string)
+	get email(): string 
+	set phone(phone: string)
+	get phone(): string
 
 
-IOrderFormView //Форма заказа
-    paymentCash: HTMLButtonElement; //Выбор метода платежа - безналичный
-    paymentCashless: HTMLButtonElement; //Выбор метода платежа - безналичный
-    adress: HTMLInputElement; //Поле ввода адреса
-    submit: HTMLButtonElement; //Кнопка отправки данных
+//Сообщение об успешном заказе
+class SuccessView extends Component<ICustomer> 
+    //Элеменеты представления
+    protected _button: HTMLElement;
+	protected _sum: HTMLElement;
+	
+	set sum(sum: number) //Отображение суммы заказа
+}
 
-  
-IContactsFormView //Форма ввода контактов
-    email: HTMLInputElement; //Поле ввода почты
-    phone: HTMLInputElement; //Поле ввода телефона
-    submit: HTMLButtonElement; //Кнопка отправки данных
-
-IOrderSuccessView //Сообщение об успешном заказе
-    button: HTMLButtonElement; //кнопка закрытия
-
-ICartCounter //Cчетчик товаров в корзине
-    counter: HTMLSpanElement;
+//Кнопка открытия корзины с счетчиком
+export class CartCounterView extends Component<ICustomer> 	
+    protected _counter: HTMLElement; //Элемент счетчика
+	set count(count: number) // Установка значения счетчика
 
 
+# Контроллер
 
-## Презентер
-Презентер обрабатывает события, поступившие от модели или представления
+Контроллер обрабатывает события от модели или представления:
 
-От модели:
-0. Загружен каталог
-    Представление выводит на экран карточки товаров
-1. Заказ сделан
-    В модальном окне отображается сообщение "Заказ оформлен"
-    Меняется шаг в модели
-    Очищается корзина
-    Обнуляется счетчик корзины в представлении
+- model.catalog.changed - изменен состав каталога
+	Отображаем новый каталог на странице
 
-От представления:
-0. Выбран товар
-    Открывается модальное окно
-    В модальном окне отображается карточка товара
-    В модели выбирается текущий товар
-1. Товар добавлен в корзину
-    Закрывается модальное окно
-    Вызывается метод добавления товара в корзину в модели
-2. Открытие корзины
-    Открывается модальное окно
-    В модальном окне отображается список товаров в корзине
-    В модели выбирается пользовательский шаг "Корзина"
-3. Увеличение или уменьшение количества товара в корзине
-    Вызывается соответствующий метод в модели
-    Изменяется отображение количества и цены товара
-    Если модель возвращает информацию о снижение количества до 0, удаляется элемент отображения товара из корзины
-4. Нажата кнопка оформить заказ
-    В модальном окне скрывается корзина и отображается форма оформления заказа
-    Меняется шаг в модели
-5. Нажата кнопка далее в окне оформления заказа
-    Скрывается форма оформления заказа и отображается форма ввода контактов
-    Информация об адресе и способе оплаты записывается в модель
-    Меняется шаг в модели
-6. Нажата кнопка Оплатить
-    Меняется шаг в модели
-    Вызывается метод оформления заказа в модели
+- view.catalog.select-product'- выбран продукт в каталоге
+    Загружаем актуальные данные о продукте с сервера
+    Открываем модальное окно с карточкой товара
 
- 
+- view.card.buy' - нажата кнопка купить
+    Загружаем актуальные данные о продукте с сервера
+    Добавляем товар в корзину
+    Изменяем счетчик на кнопке открытия корзины
+
+- view.card.tocart - нажата кнопка В корзину в карточке
+    Загружаем данные в представление корзины и отображаем его в модальном окне
+
+- 'view.card.delete' - удаление товара из корзины
+	Перерисовываем корзину с новым составом товаров
+
+- 'view.basket.order' - нажата кнопка Оформить в корзине
+    Заполняем форму заказа из модели
+    Отображаем форму заказа
+
+- 'view.order.next' - нажата кнопка Далее в форме заказа
+	Заполняем форму контактов из модели
+    Отображаем форму контактов
+
+- 'view.contacts.order' - нажата кнопка заказа из формы контактов
+	делаем заказ через Api
+    в случае успеха очищаем корзину и отображаем сообщение об успешном заказе
+
+
+- 'view.success.close' - нажата кнопка закрытия в сообщении об успешном заказе
+	закрываем модальное окно
+
+- 'view.opencart' - нажата кнопка с счетчиком
+	отображаем корзину в модальном окне
+
+- 'cart.clear' - очистка корзины
+	очищаем корзину в модели и отображении
+
 
 
 
