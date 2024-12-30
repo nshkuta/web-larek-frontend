@@ -24,8 +24,8 @@ const galeryElement = ensureElement('.gallery');
 const modalElement = ensureElement('#modal');
 const previewCardElement = cloneTemplate('#card-preview');
 const cartElement = cloneTemplate('#basket');
-const orderFormElement = cloneTemplate('#order') as HTMLFormElement;
-const contactsFormElement = cloneTemplate('#contacts') as HTMLFormElement;
+const orderFormElement = cloneTemplate<HTMLFormElement>('#order');
+const contactsFormElement = cloneTemplate<HTMLFormElement>('#contacts') ;
 const sucessElement = cloneTemplate('#success');
 const cartCounterElement = ensureElement('.header__basket');
 

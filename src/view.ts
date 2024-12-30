@@ -41,10 +41,10 @@ export class ProductCardView extends Component<TProduct> {
 
 		if (cardDisplay === 'catalog' || cardDisplay === 'preview') {
 			this._category = ensureElement('.card__category', this.container);
-			this._image = ensureElement(
+			this._image = ensureElement<HTMLImageElement>(
 				'.card__image',
 				this.container
-			) as HTMLImageElement;
+			) ;
 		}
 
 		if (cardDisplay === 'preview') {
@@ -52,17 +52,17 @@ export class ProductCardView extends Component<TProduct> {
 		}
 
 		if (this.cardButton !== 'none') {
-			this._button = ensureElement(
+			this._button = ensureElement<HTMLButtonElement>(
 				'.card__button',
 				this.container
-			) as HTMLButtonElement;
+			);
 		}
 
 		if (cardDisplay === 'basket') {
-			this._delButton = ensureElement(
+			this._delButton = ensureElement<HTMLButtonElement>(
 				'.basket__item-delete',
 				this.container
-			) as HTMLButtonElement;
+			);
 		}
 	}
 
@@ -138,15 +138,15 @@ export class CartView extends Component<TProduct[]> {
 
 	constructor(container: HTMLElement, protected events: EventEmitter) {
 		super(container, events);
-		this._list = ensureElement(
+		this._list = ensureElement<HTMLUListElement>(
 			'.basket__list',
 			this.container
-		) as HTMLUListElement;
+		);
 		this._sum = ensureElement('.basket__price', this.container);
-		this._orderButton = ensureElement(
+		this._orderButton = ensureElement<HTMLButtonElement>(
 			'.basket__button',
 			this.container
-		) as HTMLButtonElement;
+		);
 
 		this._orderButton.addEventListener('click', () => {
 			this.events.emit('view.basket.order');
