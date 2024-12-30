@@ -57,7 +57,6 @@ export class Form<T> extends Component<IFormState> {
 		this._inputs.forEach((input) => {
 			if (!input.validity.valid) {
 				this.valid = false;
-				console.log(input.labels[0]);
 				if (input.validity.patternMismatch) {
 					this.errors += input.dataset.errorMessage + ' ';
 				} else {
