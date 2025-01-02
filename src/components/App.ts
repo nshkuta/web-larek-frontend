@@ -1,7 +1,7 @@
 
-import { IEvents } from "./components/base/events";
-import { Model } from "./components/base/Model";
-import { ICustomer, TProduct } from "./types/types";
+import { IEvents } from "./base/events";
+import { Model } from "./view/Model";
+import { ICustomer, TProduct, TProductId } from "../types/types";
 
 
 export class App extends Model<TProduct[]> {    
@@ -39,7 +39,11 @@ export class App extends Model<TProduct[]> {
             this.cart.push(product);
     }
 
-    checkInCart(productId: string): boolean {
+    getProduct(productId: TProductId): TProduct {
+        return this.catalog.find((item) => item.id === productId);
+    }
+
+    checkInCart(productId: TProductId): boolean {
         if (this.cart)
         if (this.cart.find((element)=> element.id === productId)) return true;
         return false;

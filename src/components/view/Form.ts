@@ -1,6 +1,6 @@
 import { Component } from './Component';
-import { ensureAllElements, ensureElement } from '../utils/utils';
-import { EventEmitter } from './base/events';
+import { ensureAllElements, ensureElement } from '../../utils/utils';
+import { EventEmitter } from '../base/events';
 
 export interface IFormState {
 	valid: boolean;
@@ -11,6 +11,7 @@ export class Form<T> extends Component<IFormState> {
 	protected _submit: HTMLButtonElement;
 	protected _errors: HTMLElement;
 	protected _inputs: HTMLInputElement[];
+	private validationErrors: string;
 
 	constructor(
 		protected container: HTMLFormElement,
@@ -32,6 +33,7 @@ export class Form<T> extends Component<IFormState> {
 			const target = e.target as HTMLInputElement;
 			const field = target.name as keyof T;
 			const value = target.value;
+			this.validate();
 			this.onInputChange(field, value);
 		});
 
@@ -44,11 +46,13 @@ export class Form<T> extends Component<IFormState> {
 	}
 
 	protected onInputChange(field: keyof T, value: string) {
-		this.validate();
-		this.events.emit(`${this.container.name}.${String(field)}:change`, {
-			field,
-			value,
-		});
+		this.events.emit(
+			`view.form.${this.container.name}.${String(field)}:change`,
+			{
+				field,
+				value,
+			}
+		);
 	}
 
 	validate() {
@@ -58,9 +62,9 @@ export class Form<T> extends Component<IFormState> {
 			if (!input.validity.valid) {
 				this.valid = false;
 				if (input.validity.patternMismatch) {
-					this.errors += input.dataset.errorMessage + ' ';
+					this.errors += `${input.name}: ${input.dataset.errorMessage} `;
 				} else {
-					this.errors += input.validationMessage + ' ';
+					this.errors += `${input.name}: ${input.validationMessage} `;
 				}
 			}
 		});
@@ -81,8 +85,8 @@ export class Form<T> extends Component<IFormState> {
 	render(state: Partial<T> & IFormState) {
 		const { valid, errors, ...inputs } = state;
 		super.render({ valid, errors });
-		Object.assign(this, inputs);
 		this.validate();
+		Object.assign(this, inputs);
 		return this.container;
 	}
 }

@@ -60,6 +60,7 @@ class App extends Model<TProduct[]> // Модель приложения
     set catalog(products: TProduct[]) // Загрузка каталога товаров
     get catalog(): TProduct[] // Получение каталога товаров    
 
+	getProduct(productId: TProductId): TProduct //получение продукта по ID
     addToCart(product: TProduct) //Добавление товара в корзину
     checkInCart(productId: string) //Проверка наличия товара в корзине
     deleteFromCart(productId:string) //Удаление товара из корзины
@@ -147,11 +148,9 @@ export class CartCounterView extends Component<ICustomer>
 	Отображаем новый каталог на странице
 
 - view.catalog.select-product'- выбран продукт в каталоге
-    Загружаем актуальные данные о продукте с сервера
     Открываем модальное окно с карточкой товара
 
 - view.card.buy' - нажата кнопка купить
-    Загружаем актуальные данные о продукте с сервера
     Добавляем товар в корзину
     Изменяем счетчик на кнопке открытия корзины
 
@@ -182,6 +181,9 @@ export class CartCounterView extends Component<ICustomer>
 
 - 'cart.clear' - очистка корзины
 	очищаем корзину в модели и отображении
+
+- 'view.form.${ФОРМА}.${ПОЛЕ}:change'
+	при изменении поля записываем занчение в модель
 
 
 
