@@ -167,7 +167,6 @@ events.on('view.contacts.order', () => {
 			events.emit('cart.clear');
 			successView.sum = res.total;
 			modalView.content = successView.render();
-			console.log(res);
 		})
 		.catch((err) => {
 			console.log(err);
