@@ -90,7 +90,7 @@ class ProductCardView extends Component<TProduct>
 
 // Каталог
 class CatalogView extends Component<TProduct> 
-	set products //Загрузка товаров в каталог
+	set products(products: HTMLElement[])  //Загрузка товаров в каталог
 
 // Корзина
 class CartView extends Component<TProduct[]> 
@@ -99,7 +99,7 @@ class CartView extends Component<TProduct[]>
 	protected _sum: HTMLElement;
 	protected _orderButton: HTMLButtonElement;
 
-	set products(products: TProduct[]) //Загрузка товаров для отображения
+	set products(products: HTMLElement[]) //Загрузка товаров для отображения
 	set sum(sum: number) // Установка суммарной стоимости
 
 
@@ -154,7 +154,7 @@ export class CartCounterView extends Component<ICustomer>
     Добавляем товар в корзину
     Изменяем счетчик на кнопке открытия корзины
 
-- view.card.tocart - нажата кнопка В корзину в карточке
+- view.opencart - нажата кнопка перехода в корзину
     Загружаем данные в представление корзины и отображаем его в модальном окне
 
 - 'view.card.delete' - удаление товара из корзины
@@ -175,9 +175,6 @@ export class CartCounterView extends Component<ICustomer>
 
 - 'view.success.close' - нажата кнопка закрытия в сообщении об успешном заказе
 	закрываем модальное окно
-
-- 'view.opencart' - нажата кнопка с счетчиком
-	отображаем корзину в модальном окне
 
 - 'cart.clear' - очистка корзины
 	очищаем корзину в модели и отображении

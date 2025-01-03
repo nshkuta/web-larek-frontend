@@ -18,6 +18,15 @@ import { SuccessView } from './components/view/SuccessView';
 const Api = new LarekAPI(CDN_URL, API_URL);
 const events = new EventEmitter();
 
+//settings
+const categoryColors = {
+	'софт-скил': '#83FA9D',
+	другое: '#FAD883',
+	дополнительное: '#B783FA',
+	кнопка: '#83DDFA',
+	'хард-скил': '#FAA083',
+};
+
 //Elements
 const galeryElement = ensureElement('.gallery');
 const modalElement = ensureElement('#modal');
@@ -43,7 +52,8 @@ const previewCard = new ProductCardView(
 	previewCardElement,
 	'preview',
 	'buy',
-	events
+	events,
+	categoryColors
 );
 
 //Initial data response
@@ -57,14 +67,36 @@ Api.getProductList()
 
 //Events handlers
 events.on('model.catalog.changed', () => {
-	catalogView.products = app.catalog;
+	const catalogNodes: HTMLElement[] = [];
+
+	app.catalog.map((product) => {
+		const catalogCardElement = cloneTemplate('#card-catalog');
+		const catalogCardView = new ProductCardView(
+			catalogCardElement,
+			'catalog',
+			'none',
+			events,
+			categoryColors
+		);
+		const productCardNode = catalogCardView.render(product);
+		productCardNode.addEventListener('click', () => {
+			events.emit('view.catalog.select-product', {
+				id: product.id,
+			});
+		});
+		catalogNodes.push(productCardNode);
+	});
+	catalogView.products = catalogNodes;
 });
 
 events.on('view.catalog.select-product', (data: Partial<TProduct>) => {
-	if (app.checkInCart(data.id) || !app.getProduct(data.id).price) {
+	if (app.checkInCart(data.id)) {
 		previewCard.setButton('tocart');
 	} else {
 		previewCard.setButton('buy');
+		if (!app.getProduct(data.id).price) {
+			previewCard.disableButton();
+		}
 	}
 
 	modalView.content = previewCard.render(app.getProduct(data.id));
@@ -77,8 +109,25 @@ events.on('view.card.buy', (data: Partial<TProduct>) => {
 	previewCard.setButton('tocart');
 });
 
-events.on('view.card.tocart', () => {
-	cartView.products = app.cart;
+events.on('view.opencart', () => {
+	const cartNodes: HTMLElement[] = [];
+
+	app.cart.map((product, index) => {
+		const cartCardElement = cloneTemplate('#card-basket');
+		const cartCardView = new ProductCardView(
+			cartCardElement,
+			'basket',
+			'none',
+			events
+		);
+		cartCardView.index = index + 1;
+		const productCardNode = cartCardView.render(product);
+
+		cartNodes.push(productCardNode);
+	});
+
+	cartView.products = cartNodes;
+
 	cartView.sum = app.cartSum;
 	modalView.content = cartView.render();
 	modalView.open();
@@ -86,9 +135,7 @@ events.on('view.card.tocart', () => {
 
 events.on('view.card.delete', (data: Partial<TProduct>) => {
 	app.deleteFromCart(data.id);
-	cartView.products = app.cart;
-	cartView.sum = app.cartSum;
-	cartCounterView.count = app.cart.length;
+	events.emit('view.opencart', data);
 });
 
 events.on('view.basket.order', () => {
@@ -129,13 +176,6 @@ events.on('view.contacts.order', () => {
 
 events.on('view.success.close', () => {
 	modalView.close();
-});
-
-events.on('view.opencart', () => {
-	cartView.products = app.cart;
-	cartView.sum = app.cartSum;
-	modalView.content = cartView.render();
-	modalView.open();
 });
 
 events.on('cart.clear', () => {
